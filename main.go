@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/bvinc/go-sqlite-lite/sqlite3"
-	"github.com/julienschmidt/httprouter"
 )
 
 func panil(err error) {
@@ -17,13 +16,13 @@ func panil(err error) {
 	}
 }
 
-func handle(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func handle(w http.ResponseWriter, r *http.Request) {
 	conn, err := sqlite3.Open("s.db")
 	panil(err)
 	defer conn.Close()
 	conn.BusyTimeout(5 * time.Second)
 
-	x := ps.ByName("x")[1:]
+	x := r.URL.Path[1:]
 
 	if match, _ := regexp.Match(`^https?://`, []byte(x)); match { // create
 		err := conn.Exec("INSERT INTO links (link) VALUES (?)", x)
@@ -59,8 +58,5 @@ func main() {
 	conn.Exec(`CREATE TABLE IF NOT EXISTS links (id INTEGER PRIMARY KEY, link TEXT)`)
 	conn.Close()
 
-	router := httprouter.New()
-	router.GET("/*x", handle)
-
-	log.Fatal(http.ListenAndServeTLS(":443", "cert.crt", "cert.key", router))
+	log.Fatal(http.ListenAndServeTLS(":443", "cert.crt", "cert.key", http.HandlerFunc(handle)))
 }
