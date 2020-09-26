@@ -22,7 +22,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	defer conn.Close()
 	conn.BusyTimeout(5 * time.Second)
 
-	x := r.URL.Path[1:]
+	x := r.URL.RequestURI()[1:]
 
 	if match, _ := regexp.Match(`^https?://`, []byte(x)); match { // create
 		err := conn.Exec("INSERT INTO links (link) VALUES (?)", x)
