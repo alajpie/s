@@ -28,6 +28,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		err := conn.Exec("INSERT INTO links (link) VALUES (?)", x)
 		panil(err)
 		id := conn.LastInsertRowID()
+		w.Header().Set("Cache-Control", "no-cache")
 		fmt.Fprint(w, "<style>html{font-family:sans-serif;font-size:500%;margin-top:50px;text-align:center}</style>")
 		fmt.Fprint(w, id)
 		fmt.Fprint(w, "<script>history.pushState({},'','/')</script>") // protect from refreshes wasting ids
@@ -39,6 +40,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		hasRow, err := stmt.Step()
 		panil(err)
 		if !hasRow {
+			w.Header().Set("Cache-Control", "no-cache")
 			fmt.Fprint(w, "<style>html{font-family:sans-serif;font-size:500%;margin-top:50px;text-align:center}</style>")
 			fmt.Fprint(w, "what")
 			return
@@ -47,6 +49,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		var link string
 		err = stmt.Scan(&link)
 		panil(err)
+		w.Header().Set("Cache-Control", "public, max-age=86400")
 		http.Redirect(w, r, link, http.StatusMovedPermanently)
 	}
 }
