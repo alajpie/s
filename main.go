@@ -29,9 +29,9 @@ func handle(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := conn.Exec("INSERT INTO links (link) VALUES (?)", x)
 		panil(err)
 		id := conn.LastInsertRowID()
-		fmt.Fprintln(w, "<style>html{font-family:sans-serif;font-size:500%;margin-top:50px;text-align:center}</style>")
-		fmt.Fprintln(w, id)
-		fmt.Fprintln(w, "<script>history.pushState({},'','/')</script>") // protect from refreshes wasting ids
+		fmt.Fprint(w, "<style>html{font-family:sans-serif;font-size:500%;margin-top:50px;text-align:center}</style>")
+		fmt.Fprint(w, id)
+		fmt.Fprint(w, "<script>history.pushState({},'','/')</script>") // protect from refreshes wasting ids
 	} else { // redirect
 		stmt, err := conn.Prepare(`SELECT link FROM links WHERE id = ?`, x)
 		panil(err)
@@ -40,8 +40,8 @@ func handle(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		hasRow, err := stmt.Step()
 		panil(err)
 		if !hasRow {
-			fmt.Fprintln(w, "<style>html{font-family:sans-serif;font-size:500%;margin-top:50px;text-align:center}</style>")
-			fmt.Fprintln(w, "what")
+			fmt.Fprint(w, "<style>html{font-family:sans-serif;font-size:500%;margin-top:50px;text-align:center}</style>")
+			fmt.Fprint(w, "what")
 			return
 		}
 
