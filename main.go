@@ -61,5 +61,5 @@ func main() {
 	conn.Exec(`CREATE TABLE IF NOT EXISTS links (id INTEGER PRIMARY KEY, link TEXT)`)
 	conn.Close()
 
-	log.Fatal(http.ListenAndServeTLS(":443", "cert.crt", "cert.key", http.HandlerFunc(handle)))
+	log.Fatal(http.ListenAndServe("127.0.0.1:8001", http.HandlerFunc(handle)))
 }
