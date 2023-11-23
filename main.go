@@ -31,7 +31,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 		fmt.Fprint(w, "<style>html{font-family:sans-serif;font-size:500%;margin-top:50px;text-align:center}</style>")
 		fmt.Fprint(w, id)
-		fmt.Fprint(w, "<script>history.pushState({},'','/')</script>") // protect from refreshes wasting ids
+		fmt.Fprintf(w, "<script>history.pushState({},'','/%d')</script>", id) // protect from refreshes wasting ids
 	} else { // redirect
 		stmt, err := conn.Prepare(`SELECT link FROM links WHERE id = ?`, x)
 		panil(err)
