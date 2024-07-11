@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"regexp"
 	"time"
+	"os"
 
 	"github.com/bvinc/go-sqlite-lite/sqlite3"
 )
@@ -49,6 +50,11 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		var link string
 		err = stmt.Scan(&link)
 		panil(err)
+		info, err := os.Stat("s.db")
+		if err == nil {
+			lastMod := info.ModTime().UTC().Format(http.TimeFormat)
+			w.Header().Set("Last-Modified", lastMod)
+		}
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 		http.Redirect(w, r, link, http.StatusMovedPermanently)
 	}
